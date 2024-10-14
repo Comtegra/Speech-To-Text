@@ -110,11 +110,11 @@ languages = eval(language_list)
 # Sort the languages alphabetically
 languages.sort()
 
-final_languages = languages + eval(priority_languages)
+final_languages = eval(priority_languages) + languages
 
 # Create the selectbox with the parsed languages
 st.header("Transcription settings")
-audio_language = st.selectbox("Choose audio language: ", languages, index=languages.index('default'))
+audio_language = st.selectbox("Choose audio language: ", final_languages, index=final_languages.index('default'))
 st.caption("Whisper predicts the language of the source audio automatically. If the source audio language is known a-priori, it can be passed as an argument to the pipeline to avoid misprediction. If not please leave default.")
 translate_to_english = None
 if model_id == "openai/whisper-large-v3":
