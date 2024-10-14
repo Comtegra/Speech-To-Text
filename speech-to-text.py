@@ -83,19 +83,19 @@ else:
     uploaded_file = st.file_uploader("Choose a file", type=["mp3", "wav", "ogg"])
     if uploaded_file:
         st.audio(uploaded_file)
-    cut_audio_checkbox = st.checkbox("Cut audio to specific time range")
-    if cut_audio_checkbox:
-        start_time = st.number_input("Start time (seconds)", min_value=0, value=0)
-        end_time = st.number_input("End time (seconds)", min_value=0, value=0)
-        if end_time:
-            if start_time < end_time:
-                uploaded_file = cut_audio(uploaded_file, start_time, end_time)
-                st.audio(uploaded_file)
-                st.caption("Audio cut to the selected time range. Try not to cut the audio in the middle of a word.")
+        cut_audio_checkbox = st.checkbox("Cut audio to specific time range")
+        if cut_audio_checkbox:
+            start_time = st.number_input("Start time (seconds)", min_value=0, value=0)
+            end_time = st.number_input("End time (seconds)", min_value=0, value=0)
+            if end_time:
+                if start_time < end_time:
+                    uploaded_file = cut_audio(uploaded_file, start_time, end_time)
+                    st.audio(uploaded_file)
+                    st.caption("Audio cut to the selected time range. Try not to cut the audio in the middle of a word.")
+                else:
+                    st.warning("Start time must be less than end time")
             else:
-                st.warning("Start time must be less than end time")
-        else:
-            st.warning("Please enter start and end time")
+                st.warning("Please enter start and end time")
 
 
 language_list = "['english', 'chinese', 'default', 'german', 'spanish', 'russian', 'korean', 'french', 'japanese', 'portuguese', 'turkish', 'polish', 'catalan', 'dutch', 'arabic', 'swedish', 'italian', 'indonesian', 'hindi', 'finnish', 'vietnamese', 'hebrew', 'ukrainian', 'greek', 'malay', 'czech', 'romanian', 'danish', 'hungarian', 'tamil', 'norwegian', 'thai', 'urdu', 'croatian', 'bulgarian', 'lithuanian', 'latin', 'maori', 'malayalam', 'welsh', 'slovak', 'telugu', 'persian', 'latvian', 'bengali', 'serbian', 'azerbaijani', 'slovenian', 'kannada', 'estonian', 'macedonian', 'breton', 'basque', 'icelandic', 'armenian', 'nepali', 'mongolian', 'bosnian', 'kazakh', 'albanian', 'swahili', 'galician', 'marathi', 'punjabi', 'sinhala', 'khmer', 'shona', 'yoruba', 'somali', 'afrikaans', 'occitan', 'georgian', 'belarusian', 'tajik', 'sindhi', 'gujarati', 'amharic', 'yiddish', 'lao', 'uzbek', 'faroese', 'haitian creole', 'pashto', 'turkmen', 'nynorsk', 'maltese', 'sanskrit', 'luxembourgish', 'myanmar', 'tibetan', 'tagalog', 'malagasy', 'assamese', 'tatar', 'hawaiian', 'lingala', 'hausa', 'bashkir', 'javanese', 'sundanese', 'cantonese', 'burmese', 'valencian', 'flemish', 'haitian', 'letzeburgesch', 'pushto', 'panjabi', 'moldavian', 'moldovan', 'sinhalese', 'castilian', 'mandarin']"
