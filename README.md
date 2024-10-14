@@ -3,14 +3,14 @@
   <h1 align="center">Speech-To-Text</h1>
 </a>
 
-<p align="center">
-  A simple open source Speech-To-Text app. Powered by Comtegra GPU Cloud and Whisper. Made with ❤️ by <a href="https://cgc.comtegra.cloud/">Comtegra S.A.</a>
-</p>
+<p align="center">A simple open source Speech-To-Text app. Powered by Comtegra GPU Cloud and Whisper.</p> 
 
 <p align="center">
 <b>whisper-large-v3:</b> 5 minutes of audio → 35 seconds of processing<br>
 <b>whisper-large-v3-turbo:</b> 5 minutes of audio → 8 seconds of processing
 </p>
+
+<p align="center">Made with ❤️ by <a href="https://cgc.comtegra.cloud/">Comtegra S.A.</a></p>
 
 # Tech stack
 

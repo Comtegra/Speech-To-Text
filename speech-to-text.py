@@ -4,7 +4,6 @@ from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 import io
 import numpy as np
 from pydub import AudioSegment
-from st_audiorec import st_audiorec
 from langdetect import detect
 from audiorecorder import audiorecorder
 
