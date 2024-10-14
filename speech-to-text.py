@@ -11,13 +11,14 @@ st.set_page_config(page_title="Speech-To-Text", layout="wide", page_icon="./medi
 
 def timestamped_chunks(chunks):
     """Format and display timestamped chunks."""
-    time_offset = -30
+    time_offset = 0
 
     for i, chunk in enumerate(chunks):
         # If start_time is 0, add 30 seconds to the next timestamp, becauase Whisper is chunking the audio in 30 second intervals.
-        if chunk["timestamp"][0] == 0:
-            time_offset += 30
-        
+        if i > 0:
+            if chunk["timestamp"][0] == 0:
+                time_offset += 30
+
         start_time = chunk["timestamp"][0] + (time_offset)
         end_time = chunk["timestamp"][1] + (time_offset)
    
