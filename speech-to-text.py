@@ -11,10 +11,17 @@ st.set_page_config(page_title="Speech-To-Text", layout="wide", page_icon="./medi
 
 def timestamped_chunks(chunks):
     """Format and display timestamped chunks."""
-    for chunk in chunks:
-        start_time = format_time(chunk["timestamp"][0])
-        end_time = format_time(chunk["timestamp"][1])
-        st.markdown(f"**[{start_time} - {end_time}]** {chunk['text']}")
+    time_offset = -30
+
+    for i, chunk in enumerate(chunks):
+        # If start_time is 0, add 30 seconds to the next timestamp, becauase Whisper is chunking the audio in 30 second intervals.
+        if chunk["timestamp"][0] == 0:
+            time_offset += 30
+        
+        start_time = chunk["timestamp"][0] + (time_offset)
+        end_time = chunk["timestamp"][1] + (time_offset)
+   
+        st.markdown(f"**[{format_time(start_time)} - {format_time(end_time)}]** {chunk['text']}")
 
 
 def format_time(total_seconds):
@@ -23,6 +30,22 @@ def format_time(total_seconds):
     minutes = int((total_seconds % 3600) // 60)
     seconds = int(total_seconds % 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
+def cut_audio(file, start_seconds, end_seconds):
+    """Cut an audio file to a specific time range."""
+    output = "tmp.wav"
+
+    sound = AudioSegment.from_file(file)
+
+    start_time = start_seconds * 1000
+    end_time = end_seconds * 1000
+
+    new_sound = sound[start_time:end_time]
+    new_sound.export(output, format="wav")
+
+    return output
+
 
 
 st.title("🎙️ Speech-To-Text Transcription (Capable of Recognizing 99 Languages)")
@@ -60,7 +83,19 @@ else:
     uploaded_file = st.file_uploader("Choose a file", type=["mp3", "wav", "ogg"])
     if uploaded_file:
         st.audio(uploaded_file)
-
+    cut_audio_checkbox = st.checkbox("Cut audio to specific time range")
+    if cut_audio_checkbox:
+        start_time = st.number_input("Start time (seconds)", min_value=0, value=0)
+        end_time = st.number_input("End time (seconds)", min_value=0, value=0)
+        if end_time:
+            if start_time < end_time:
+                uploaded_file = cut_audio(uploaded_file, start_time, end_time)
+                st.audio(uploaded_file)
+                st.caption("Audio cut to the selected time range. Try not to cut the audio in the middle of a word.")
+            else:
+                st.warning("Start time must be less than end time")
+        else:
+            st.warning("Please enter start and end time")
 
 
 language_list = "['english', 'chinese', 'default', 'german', 'spanish', 'russian', 'korean', 'french', 'japanese', 'portuguese', 'turkish', 'polish', 'catalan', 'dutch', 'arabic', 'swedish', 'italian', 'indonesian', 'hindi', 'finnish', 'vietnamese', 'hebrew', 'ukrainian', 'greek', 'malay', 'czech', 'romanian', 'danish', 'hungarian', 'tamil', 'norwegian', 'thai', 'urdu', 'croatian', 'bulgarian', 'lithuanian', 'latin', 'maori', 'malayalam', 'welsh', 'slovak', 'telugu', 'persian', 'latvian', 'bengali', 'serbian', 'azerbaijani', 'slovenian', 'kannada', 'estonian', 'macedonian', 'breton', 'basque', 'icelandic', 'armenian', 'nepali', 'mongolian', 'bosnian', 'kazakh', 'albanian', 'swahili', 'galician', 'marathi', 'punjabi', 'sinhala', 'khmer', 'shona', 'yoruba', 'somali', 'afrikaans', 'occitan', 'georgian', 'belarusian', 'tajik', 'sindhi', 'gujarati', 'amharic', 'yiddish', 'lao', 'uzbek', 'faroese', 'haitian creole', 'pashto', 'turkmen', 'nynorsk', 'maltese', 'sanskrit', 'luxembourgish', 'myanmar', 'tibetan', 'tagalog', 'malagasy', 'assamese', 'tatar', 'hawaiian', 'lingala', 'hausa', 'bashkir', 'javanese', 'sundanese', 'cantonese', 'burmese', 'valencian', 'flemish', 'haitian', 'letzeburgesch', 'pushto', 'panjabi', 'moldavian', 'moldovan', 'sinhalese', 'castilian', 'mandarin']"
@@ -80,17 +115,11 @@ if model_id == "openai/whisper-large-v3":
     translate = st.checkbox("Translate to English")
     if translate:
         translate_to_english = True
-# custom_translate = st.checkbox("Translate to custom language (may be unreliable)")
-# if custom_translate:
-#     st.caption("By default, Whisper can only translate to English. However, by bypassing the translate prompt by using transcribe and language options, we can try to trick Whisper into translating to any language. Keep in mind that this method may sometimes produce incorrect or nonsensical translations for non-English target languages.")
-#     custom_language = st.selectbox("Choose a language (to translate to):", languages, index=0)
-timestamp_options = ["No timestamps", "Timestamps", "Word-level timestamps"]
+timestamp_options = ["No timestamps", "Timestamps"]
 timestamp_choice = st.selectbox("Timestamp options:", timestamp_options, index=0)
 
 if timestamp_choice == "Timestamps":
     timestamps_status = True
-elif timestamp_choice == "Word-level timestamps":
-    timestamps_status = "word"
 else:
     timestamps_status = False
     
@@ -122,8 +151,6 @@ generate_kwargs = {
     "temperature": temperature,
 }
 
-# if custom_translate and custom_language:
-#     generate_kwargs["language"] = custom_language
 if translate_to_english == True:
     generate_kwargs["task"] = "translate"
     if audio_language != "default":
@@ -141,6 +168,8 @@ with st.spinner("Processing file..."):
             try:
                 if voice_recording == "Record audio":
                     file = uploaded_file
+                elif cut_audio_checkbox:
+                    file = cut_audio(uploaded_file, start_time, end_time)
                 else:
                     file = uploaded_file.read()
                 if timestamp_choice != "No timestamps":

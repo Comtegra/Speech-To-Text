@@ -24,10 +24,10 @@
 
 # Possible future improvements
 
-- [ ] Improve how timestamps work
+- [x] Improve how timestamps work
 - [ ] Integrate additional/newer STT models
 - [ ] Implement real-time transcription
-- [ ] Option to transcribe only a part of the audio
+- [x] Option to transcribe only a part of the audio
 - [x] Add voice recording option
 
 The sky's the limit! With [CGC (Comtegra GPU Cloud)](https://cgc.comtegra.cloud/), we're only limited by our imagination.
