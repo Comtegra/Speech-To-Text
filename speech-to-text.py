@@ -6,6 +6,7 @@ import numpy as np
 from pydub import AudioSegment
 from st_audiorec import st_audiorec
 from langdetect import detect
+from audiorecorder import audiorecorder
 
 st.set_page_config(page_title="Speech-To-Text", layout="wide", page_icon="./media/favicon.ico")
 
@@ -74,11 +75,13 @@ with st.sidebar:
 voice_recording = st.selectbox("Do you want to upload a file or record audio?", ["Upload a file", "Record audio"])
 
 if voice_recording == "Record audio":
-    wav_audio_data = st_audiorec()
+    st.header("Audio Recorder")
+    audio = audiorecorder(start_prompt="Start recording", stop_prompt="Stop recording", pause_prompt="Pause recording", show_visualizer=True, key=None)
 
-    if wav_audio_data is not None:
-        st.audio(wav_audio_data, format='audio/wav')
-    uploaded_file = wav_audio_data
+    if len(audio) > 0:
+        # To play audio in frontend:
+        st.audio(audio.export().read())  
+    uploaded_file = audio.export().read()
 else:
     # Choose your file
     uploaded_file = st.file_uploader("Choose a file", type=["mp3", "wav", "ogg"])
