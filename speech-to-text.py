@@ -76,7 +76,8 @@ voice_recording = st.selectbox("Do you want to upload a file or record audio?", 
 
 if voice_recording == "Record audio":
     st.header("Audio Recorder")
-    audio = audiorecorder(start_prompt="Start recording", stop_prompt="Stop recording", pause_prompt="Pause recording", show_visualizer=True, key=None)
+    audio = audiorecorder(start_prompt="", stop_prompt="", pause_prompt="", show_visualizer="True", key=None)
+    st.caption("Press the microphone button to start recording. You can pause, resume and stop recording. When you're done, press the save button.")
 
     if len(audio) > 0:
         # To play audio in frontend:
